@@ -18,7 +18,9 @@ public class CRUDController {
     public void insertBook(BookDto bookDto){
         try {
             st=con.createStatement();
-            int stmt=st.executeUpdate("insert into bookinfo values('"+bookDto.Book_Title+"', '"+bookDto.Book_Name+"',' "+bookDto.Book_Birth+"');");
+            int stmt=st.executeUpdate("insert into bookinfo(book_title, " +
+                    "book_author, book_birth) values('"+bookDto.Book_Title+"', '"+
+                    bookDto.Book_Author+"',' "+bookDto.Book_Birth+"');");
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
@@ -38,9 +40,11 @@ public class CRUDController {
         System.out.println(arr);
         try {
             st=con.createStatement();
-            rs=st.executeQuery("select * from bookinfo;");
+            rs=st.executeQuery("select Book_Title,Book_Author,Book_Birth " +
+                    "from bookinfo;");
             while(rs.next()){
-                arr.add(new BookDto(rs.getString(1), rs.getString(2), rs.getString(3)))
+                arr.add(new BookDto(rs.getString(1),
+                        rs.getString(2), rs.getString(3)));
             }
         } catch (SQLException throwables) {
             throwables.printStackTrace();
@@ -61,9 +65,12 @@ public class CRUDController {
         System.out.println(arr);
         try {
             st = con.createStatement();
-            rs=st.executeQuery("select * from bookinfo where Book_Title like '%" + content+  "%' or Book_Name like '%" + content+  "%';");
+            rs=st.executeQuery("select Book_Title,Book_Author,Book_Birth " +
+                    "from bookinfo where Book_Title like '%" + content+  "%' or " +
+                    "Book_Author like '%" + content+  "%';");
             while(rs.next()){
-                arr.add(new BookDto(rs.getString(1),rs.getString(2),rs.getString(3)));
+                arr.add(new BookDto(rs.getString(1),rs.getString(2),
+                        rs.getString(3)));
             }
         } catch (SQLException throwables) {
             throwables.printStackTrace();

@@ -57,19 +57,18 @@ public class MainGui {
         jpanel.add(tSearch);
         ㅣSearch.setBounds(125, 61, 70, 30);
         jpanel.add(ㅣSearch);
+        btnInsert.setBounds(370, 20, 100, 30);
+        btnRead.setBounds(10, 60, 100, 30);
+        btnSearch.setBounds(320, 60, 150, 30);
 
         //도서추가 버튼
         jpanel.add(btnInsert = new JButton("도서추가"));
-        btnInsert.setBounds(370, 20, 100, 30);
 
         //전체출력 버튼
         jpanel.add(btnRead = new JButton("전체출력"));
-        btnRead.setBounds(10, 60, 100, 30);
-
 
         //검색 버튼
         jpanel.add(btnSearch = new JButton("제목 or 저자 검색"));
-        btnSearch.setBounds(320, 60, 150, 30);
 
         //출력패널
         JScrollPane jsp = new JScrollPane(tprint);
@@ -84,9 +83,9 @@ public class MainGui {
                 tprint.setText("");
 
                 String Book_Title=tTitle.getText();
-                String Book_Name=tName.getText();
+                String Book_Author=tName.getText();
                 String Book_Birth=tBirth.getText();
-                dao.insertBook(new BookDto(Book_Title,Book_Name,Book_Birth));
+                dao.insertBook(new BookDto(Book_Title,Book_Author,Book_Birth));
 
                 tprint.append("도서 입력완료 \n");
 
@@ -110,7 +109,7 @@ public class MainGui {
                 tprint.append("\t" + "------------------------------------------------------------\n");
 
                 for (BookDto model : arr) {
-                    tprint.append("\t" + model.getBook_Title() + " \t " + model.getBook_Name() + " \t " + model.getBook_Birth()
+                    tprint.append("\t" + model.getBook_Title() + " \t " + model.getBook_Author() + " \t " + model.getBook_Birth()
                             + "\n");
                 }
             }
@@ -122,15 +121,13 @@ public class MainGui {
             public void actionPerformed(ActionEvent arg0) {
                 tprint.setText("");
                 String substance = tSearch.getText();
-
                 ArrayList<BookDto> arr = new ArrayList<BookDto>();
                 arr = dao.searchBook(substance);
                 tprint.append(" \n");
                 tprint.append("\t" + "책 제목 " + "\t" + " 저자" + "\t" +  "       출판일\n");
                 tprint.append("\t" + "------------------------------------------------------------\n");
-
                 for (BookDto bookDto : arr) {
-                    tprint.append("\t" + bookDto.getBook_Title() + " \t " + bookDto.getBook_Name() + " \t " + bookDto.getBook_Birth()
+                    tprint.append("\t" + bookDto.getBook_Title() + " \t " + bookDto.getBook_Author() + " \t " + bookDto.getBook_Birth()
                             + "\n");
                 }
                 tTitle.setText("");
