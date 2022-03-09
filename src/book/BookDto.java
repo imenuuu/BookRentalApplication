@@ -1,8 +1,9 @@
+package book;
+
 public class BookDto {
-    int id;
-    String Book_Title;
-    String Book_Author;
-    String Book_Birth;
+    public String Book_Title;
+    public String Book_Author;
+    public String Book_Birth;
 
     public BookDto(String Book_Title, String Book_Author, String Book_Birth){
         this.Book_Title=Book_Title;
@@ -11,9 +12,6 @@ public class BookDto {
     }
 
 
-    public int getId() {
-        return id;
-    }
     public String getBook_Title() {
         return Book_Title;
     }
