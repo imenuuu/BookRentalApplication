@@ -20,8 +20,8 @@ public class SearchBooks {
             st=con.createStatement();
             rs=st.executeQuery("select Book_Title,Book_Author,Book_Birth from bookinfo;");
             while(rs.next()){
-                arr.add((BookDto) new book.BookDto(rs.getString(1), rs.getString(2),
-                        rs.getString(3)));
+                arr.add((new book.BookDto(rs.getString(1), rs.getString(2),
+                        rs.getString(3))));
             }
         }
         catch (SQLException throwables) {

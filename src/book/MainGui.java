@@ -4,11 +4,13 @@ import book.dao.InsertBooks;
 import book.dao.SearchBooks;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 import java.util.ArrayList;
+import java.util.Vector;
 
 public class MainGui {
     JFrame jframe = new JFrame();
-    JPanel jpanel = new JPanel();
+    JPanel bookPage = new JPanel();
     //텍스트
 
     JLabel Title = new JLabel("제목 : ");
@@ -27,6 +29,9 @@ public class MainGui {
     JButton btnInsert,btnRead,btnSearch;
 
 
+    JTable table;
+    DefaultTableModel defaultTableModel;
+    JScrollPane scrolledTable;
 
 
     MainGui() {
@@ -39,97 +44,132 @@ public class MainGui {
         jframe.setBounds(50, 50, 780, 450);
         jframe.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         jframe.setVisible(true);
-        jpanel.setLayout(null);
-        jframe.add(jpanel);
+        bookPage.setLayout(null);
+        jframe.add(bookPage);
 
         tTitle.setBounds(60, 25, 200, 25);
-        jpanel.add(tTitle);
+        bookPage.add(tTitle);
         Title.setBounds(10, 20, 70, 30);
-        jpanel.add(Title);
-
+        bookPage.add(Title);
         tName.setBounds(60, 65, 200, 25);
-        jpanel.add(tName);
+        bookPage.add(tName);
         Name.setBounds(10, 60, 70, 30);
-        jpanel.add(Name);
-
+        bookPage.add(Name);
         tBirth.setBounds(60, 105, 200, 25);
-        jpanel.add(tBirth);
+        bookPage.add(tBirth);
         Birth.setBounds(10, 100, 70, 30);
-        jpanel.add(Birth);
+        bookPage.add(Birth);
+
 
         //도서추가 버튼
-        jpanel.add(btnInsert = new JButton("도서추가"));
+        bookPage.add(btnInsert = new JButton("도서추가"));
         btnInsert.setBounds(160, 140, 100, 30);
         //전체출력 버튼
-        jpanel.add( btnRead = new JButton("전체출력"));
+        bookPage.add( btnRead = new JButton("전체출력"));
         btnRead.setBounds(660, 20, 100, 30);
         //검색 버튼
-        jpanel.add(btnSearch = new JButton("제목 or 저자 검색"));
+        bookPage.add(btnSearch = new JButton("제목 or 저자 검색"));
         tSearch.setBounds(370, 25, 120, 25);
-        jpanel.add(tSearch);
+
+        bookPage.add(tSearch);
         Search.setBounds(300, 20, 70, 30);
-        jpanel.add(Search);
+        bookPage.add(Search);
         btnSearch.setBounds(500, 20, 150, 30);
 
+        table =new JTable();
+        table.setBounds(300, 60, 460, 400);
+        bookPage.add(table);
 
-
-        //출력패널
-        JScrollPane jsp = new JScrollPane(tprint);
-        jsp.setBounds(300, 60, 460, 400);
-        jpanel.add(jsp);
 
         InsertBooks insertBooks=new InsertBooks();
         btnInsert.addActionListener(e -> {
-            tprint.setText("");
-
             String Book_Title=tTitle.getText();
             String Book_Author=tName.getText();
             String Book_Birth=tBirth.getText();
             insertBooks.InsertBooks(new BookDto(Book_Title,Book_Author,Book_Birth));
-
+            JOptionPane.showConfirmDialog(null,"추가완료");
             tTitle.setText("");
             tName.setText("");
             tBirth.setText("");
-            tprint.setText("");
-            tprint.append("도서 추가완료 \n");
         });
+
 
         //도서 전체목록조회
 
         SearchBooks searchdao=new SearchBooks();
 
-        btnRead.addActionListener(arg0 -> {
-            tprint.setText("");
-            ArrayList<book.BookDto> arr;
-            arr = searchdao.readBook();
-            tprint.append(" \n");
-            tprint.append("\t" + "책 제목 " + "\t" + "  저자" + "\t" + "         출판일\n");
-            tprint.append("\t" + "------------------------------------------------------------\n");
+        btnRead.addActionListener(e -> {
+            tTitle.setText("");
+            tName.setText("");
+            tBirth.setText("");
+            table.setVisible(false);
 
-            for (book.BookDto model : arr) {
-                tprint.append("\t" + model.getBook_Title() + " \t " + model.getBook_Author() + " \t " + model.getBook_Birth()
-                        + "\n");
-            }
-        });
+            ArrayList<BookDto> arr=searchdao.readBook();
+            Vector<String> content = new Vector<>();
 
-        //도서 검색
-        btnSearch.addActionListener(arg0 -> {
-            tprint.setText("");
-            String substance = tSearch.getText();
-            ArrayList<BookDto> arr;
-            arr = searchdao.searchBook(substance);
-            tprint.append(" \n");
-            tprint.append("\t" + "책 제목 " + "\t" + " 저자" + "\t" +  "       출판일\n");
-            tprint.append("\t" + "------------------------------------------------------------\n");
+            content.addElement("책 제목");
+            content.addElement("책 저자");
+            content.addElement("출판일");
+            arr=searchdao.readBook();
+
+            defaultTableModel = new DefaultTableModel(content, 0);
+
             for (BookDto bookDto : arr) {
-                tprint.append("\t" + bookDto.getBook_Title() + " \t " + bookDto.getBook_Author() + " \t " + bookDto.getBook_Birth()
-                        + "\n");
+                Vector<Object> list = new Vector<>();
+                list.addElement(bookDto.getBook_Title());
+                list.addElement(bookDto.getBook_Author());
+                list.addElement(bookDto.getBook_Birth());
+                defaultTableModel.addRow(list);
             }
+            table.setVisible(true);
+            table = new JTable(defaultTableModel);
+            table.setBounds(300, 60, 460, 400);
+            bookPage.add(table);
+
             tTitle.setText("");
             tName.setText("");
             tBirth.setText("");
             tSearch.setText("");
+
         });
 
+
+        //도서 검색
+        btnSearch.addActionListener(e -> {
+
+
+                tprint.setVisible(false);
+                table.setVisible(false);
+
+                String substance = tSearch.getText();
+
+                ArrayList<BookDto> arr;
+                arr = searchdao.searchBook(substance);
+
+                Vector<String> content = new Vector<>();
+
+                content.addElement("책 제목");
+                content.addElement("책 저자");
+                content.addElement("출판일");
+                defaultTableModel = new DefaultTableModel(content, 0);
+
+                for (BookDto bookDto : arr) {
+                    Vector<Object> list= new Vector<>();
+                    list.addElement(bookDto.getBook_Title());
+                    list.addElement(bookDto.getBook_Author());
+                    list.addElement(bookDto.getBook_Birth());
+                    defaultTableModel.addRow(list);
+                }
+                table = new JTable(defaultTableModel);
+                table.setBounds(300, 60, 460, 400);
+                table.setVisible(true);
+                bookPage.add(table);
+                tTitle.setText("");
+                tName.setText("");
+                tBirth.setText("");
+                tSearch.setText("");
+
+            });
+
     }
-}
+        }
